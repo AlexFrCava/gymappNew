@@ -1,43 +1,38 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
-import dayjs from 'dayjs';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+import dayjs from "dayjs";
 import React from "react";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export default function AddExercise({ addExercise, data }) {
   const [open, setOpen] = React.useState(false);
   const [exercise, setExercise] = React.useState({
     duration: 0,
-    activity: '',
-    customer: {
-   ...data.customer
-    }
-    //customer:props.params.value
+    activity: "",
+    date: "",
   });
   const [date, setDate] = React.useState(dayjs());
 
   const handleClickOpen = () => {
     setOpen(true);
+    console.log(data);
   };
 
   const handleSave = () => {
-    
-    const dateString = date.format('YYYY-MM-DD');
-
     const newExercise = {
       ...exercise,
-      customer: {
-        ...exercise.customer,
-        exercises: [
-          ...(exercise.customer.exercises || []),
-          {
-            duration: exercise.duration,
-            activity: exercise.activity,
-            customer: exercise.customer,
-            date: dateString
-          }
-        ]
-      }
+      date: date.format("YYYY-MM-DD"),
+      customer: data.links[0].href,
     };
-  
+
     addExercise(newExercise);
     console.log(newExercise);
     setOpen(false);
@@ -51,11 +46,11 @@ export default function AddExercise({ addExercise, data }) {
 
   const inputChanged = (event) => {
     setExercise({ ...exercise, [event.target.name]: event.target.value });
-  }
+  };
 
   const handleDateChange = (event) => {
     setDate(dayjs(event.target.value));
-  }
+  };
 
   return (
     <div>
@@ -66,6 +61,15 @@ export default function AddExercise({ addExercise, data }) {
       <Dialog onClose={handleSave} open={open}>
         <DialogTitle>Add Exercise</DialogTitle>
         <DialogContent>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateTimePicker label="Basic date time picker" 
+            autoFocus={true}
+            name="date"
+            onChange={handleDateChange}
+            format="YYYY-MM-DD"
+            fullWidth={true}
+            />
+            </LocalizationProvider>
           <TextField
             autoFocus={true}
             name="duration"
@@ -86,17 +90,7 @@ export default function AddExercise({ addExercise, data }) {
             variant="standard"
             value={exercise.activity}
           />
-          <TextField
-            autoFocus={true}
-            name="date"
-            onChange={handleDateChange}
-            margin="dense"
-            label="Date"
-            type="date"
-            fullWidth={true}
-            variant="standard"
-            value={date.format('YYYY-MM-DD')}
-          />
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSave}>Save</Button>
