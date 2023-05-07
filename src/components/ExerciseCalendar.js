@@ -16,7 +16,7 @@ const ExerciseCalendar = () => {
         return setSession(
           trainings.map((training, i) => ({
             id: i,
-            title: training.activity + '<br />' + training.customer.firstname + ' ' + training.customer.lastname + '<br />' + moment.utc(training.date).format('HH:mm'), // Convert to UTC and format
+            title: training.activity + '<br />' + (training.customer?.firstname ?? '') + ' ' + (training.customer?.lastname ?? '') + '<br />' + moment.utc(training.date).format('HH:mm'),
             start: moment.utc(training.date).toDate(), 
             end: moment.utc(training.date).add(training.duration, 'minutes').toDate(), 
           }))
