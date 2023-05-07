@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 
 import CustomerList from './components/CustomerList';
 import ExerciseList from './components/ExerciseList';
-
+import ExerciseCalendar from './components/ExerciseCalendar';
 
 function App() {
   const [value, setValue] = useState('one');
@@ -22,7 +22,7 @@ function App() {
       <AppBar position='static'>
         <Toolbar> 
           <Typography variant='h5'>
-          Personal Trainer company
+          Personal Trainer
           </Typography>
           <Tabs
   value={value}
@@ -49,11 +49,22 @@ function App() {
       },
     }}
   />
+  <Tab
+    label="Calendar"
+    value="three"
+    sx={{
+      '&.Mui-selected': {
+        color: 'white', 
+       fontWeight: 'bold', 
+      },
+    }}
+  />
 </Tabs>
         </Toolbar>
       </AppBar>
       {value==='one' && <div><CustomerList/></div>}
       {value==='two'&& <div><ExerciseList/></div>}
+      {value === 'three' && <div><ExerciseCalendar /></div>}
     </div>
   );
 }

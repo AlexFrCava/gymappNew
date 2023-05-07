@@ -6,19 +6,22 @@ import { AgGridReact } from 'ag-grid-react/lib/agGridReact';
 import { Exercises_API } from '../constants';
 import { Full_API } from '../constants';
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 
 
 export default function ExerciseList() {
-  const [trainings, setTrainings] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   const [columnDefs] = useState([
     {
       field: "date",
       sortable: true,
       filter: true,
-      cellRenderer: (trainings) => {
-        return dayjs(trainings.value).format("DD/MM/YYYY");
+      cellRenderer: (exercises) => {
+        return dayjs.utc(exercises.value).format("DD/MM/YYYY HH:mm");
       },
     },
     { 
@@ -49,29 +52,29 @@ export default function ExerciseList() {
       sortable: true,
       filter: true,
       cellRenderer: params => 
-      <Button  color='error' variant="outlined" onClick={() => deleteTraining(params.value)}>Delete</Button>
+      <Button  color='error' variant="outlined" onClick={() => deleteExercise(params.value)}>Delete</Button>
     }
   ])
 
   useEffect(() => {
-    getTrainings();
+    getExercises();
   }, []);
-  const getTrainings = () => {
+  const getExercises = () => {
     fetch(Full_API)
       .then(response => response.json())
       .then(data => {
         console.log(data); 
-        setTrainings(data);
+        setExercises(data);
       })
       .catch(err => console.error(err))
   }
 
-  const deleteTraining = (id) => {
+  const deleteExercise = (id) => {
     if (window.confirm('Delete this exercise?')) {
       fetch(Exercises_API+'/' + id, { method: 'DELETE' })
         .then(response => {
           if (response.ok) {
-            getTrainings();
+            getExercises();
           }
           else
             alert('Error');
@@ -86,7 +89,7 @@ export default function ExerciseList() {
 
         
         <AgGridReact
-           rowData={Array.isArray(trainings) ? trainings : []}
+           rowData={Array.isArray(exercises) ? exercises : []}
           columnDefs={columnDefs}
           pagination={true}
           paginationPageSize={10}

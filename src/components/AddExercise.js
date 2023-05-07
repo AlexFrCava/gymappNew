@@ -9,7 +9,7 @@ import {
 import dayjs from "dayjs";
 import React from "react";
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export default function AddExercise({ addExercise, data }) {
@@ -19,7 +19,7 @@ export default function AddExercise({ addExercise, data }) {
     activity: "",
     date: "",
   });
-  const [date, setDate] = React.useState(dayjs());
+  const [date, setDate] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,7 +29,7 @@ export default function AddExercise({ addExercise, data }) {
   const handleSave = () => {
     const newExercise = {
       ...exercise,
-      date: date.format("YYYY-MM-DD"),
+      date: dayjs(date).format("YYYY-MM-DDTHH:mm:ss"),
       customer: data.links[0].href,
     };
 
@@ -48,8 +48,9 @@ export default function AddExercise({ addExercise, data }) {
     setExercise({ ...exercise, [event.target.name]: event.target.value });
   };
 
-  const handleDateChange = (event) => {
-    setDate(dayjs(event.target.value));
+  const handleDateChange = (newDate) => {
+    const dateTime = dayjs(newDate).format("YYYY-MM-DDTHH:mm:ss");
+    setDate(dateTime);
   };
 
   return (
@@ -65,9 +66,11 @@ export default function AddExercise({ addExercise, data }) {
         <DateTimePicker label="Basic date time picker" 
             autoFocus={true}
             name="date"
-            onChange={handleDateChange}
-            format="YYYY-MM-DD"
+            onChange={(newDate) => handleDateChange(newDate)}
+            renderInput={(props)=><TextField {...props} />}
+            value={date}
             fullWidth={true}
+            ampm={false}
             />
             </LocalizationProvider>
           <TextField
